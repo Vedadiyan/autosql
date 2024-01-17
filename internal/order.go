@@ -46,7 +46,7 @@ func Order(bucket []string) ([]string, error) {
 		}
 		if strings.HasPrefix(value, "alter table") {
 			if strings.Contains(value, "add column") || strings.Contains(value, "add constraint") {
-				altersAdd = append(altersAdd, item)
+				altersAdd = append(altersAdd, Guard(item, "duplicate_object"))
 				continue
 			}
 			if strings.Contains(value, "drop column") || strings.Contains(value, "drop constraint") {
