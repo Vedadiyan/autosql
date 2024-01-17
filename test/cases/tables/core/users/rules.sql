@@ -1,0 +1,1 @@
+CREATE RULE core_users_delete_protect AS ON DELETE TO core.users DO INSTEAD UPDATE core.users SET deletion_date = CURRENT_TIMESTAMP WHERE id = OLD.id;

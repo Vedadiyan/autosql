@@ -1,0 +1,1 @@
+CREATE TRIGGER core_credentials_before_insert BEFORE INSERT ON core.credentials FOR EACH ROW EXECUTE FUNCTION insert_credential();
