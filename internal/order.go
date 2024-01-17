@@ -105,7 +105,7 @@ func ReplaceManyWithOne(str string, old rune, new rune) string {
 func Guard(item string) string {
 	return fmt.Sprintf(
 		`DO $$ BEGIN
-%s
+	%s
 EXCEPTION
 WHEN duplicate_object THEN null;
 END $$;`,
