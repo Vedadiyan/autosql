@@ -103,7 +103,7 @@ func Guard(item string, execption string) string {
 		`DO $$ BEGIN
 	%s
 EXCEPTION
-	WHEN %s THEN null;
+	WHEN %s THEN NULL;
 END $$;`,
 		strings.ReplaceAll(item, "\r\n", "\r\n\t"),
 		execption,
