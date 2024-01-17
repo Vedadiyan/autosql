@@ -59,10 +59,26 @@ func Order(bucket []string) ([]string, error) {
 			continue
 		}
 		if strings.HasPrefix(value, "create type") {
+			item = fmt.Sprintf(
+				`DO $$ BEGIN
+	%s
+	EXCEPTION
+	WHEN duplicate_object THEN null;
+END $$;`,
+				strings.ReplaceAll(strings.Replace(item, "create type if not exists", "create type", 1), "\r\n", "\r\n\t"),
+			)
 			types = append(types, item)
 			continue
 		}
 		if strings.HasPrefix(value, "create domain") {
+			item = fmt.Sprintf(
+				`DO $$ BEGIN
+	%s
+	EXCEPTION
+	WHEN duplicate_object THEN null;
+END $$;`,
+				strings.ReplaceAll(strings.Replace(item, "create domain if not exists", "create domain", 1), "\r\n", "\r\n\t"),
+			)
 			domains = append(domains, item)
 			continue
 		}
