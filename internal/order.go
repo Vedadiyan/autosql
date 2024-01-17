@@ -20,9 +20,6 @@ func Order(bucket []string) ([]string, error) {
 
 	for _, item := range bucket {
 		value := ReplaceManyWithOne(strings.ToLower(item), ' ', ' ')
-		item = strings.TrimSuffix(item, "\r\n")
-		item = strings.TrimSuffix(item, ";")
-		item = item + ";"
 		if strings.HasPrefix(value, "create table") {
 			tables = append(tables, item)
 			continue
