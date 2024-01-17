@@ -24,16 +24,12 @@ func Order(bucket []string) ([]string, error) {
 			tables = append(tables, item)
 			continue
 		}
-		if strings.HasPrefix(value, "create function") {
-			functions = append(functions, Guard(item))
-			continue
-		}
-		if strings.HasPrefix(value, "create or replace function") {
+		if strings.HasPrefix(value, "create function") || strings.HasPrefix(value, "create or replace function") {
 			functions = append(functions, item)
 			continue
 		}
 		if strings.HasPrefix(value, "create trigger") {
-			triggers = append(triggers, Guard(item))
+			triggers = append(triggers, Guard(item, "duplicate_object"))
 			continue
 		}
 		if strings.HasPrefix(value, "create or replace trigger") {
@@ -41,7 +37,7 @@ func Order(bucket []string) ([]string, error) {
 			continue
 		}
 		if strings.HasPrefix(value, "create rule") {
-			rules = append(rules, Guard(item))
+			rules = append(rules, Guard(item, "duplicate_object"))
 			continue
 		}
 		if strings.HasPrefix(value, "create or replace rule") {
@@ -63,19 +59,19 @@ func Order(bucket []string) ([]string, error) {
 			}
 		}
 		if strings.HasPrefix(value, "create extension") {
-			extensions = append(extensions, Guard(item))
+			extensions = append(extensions, Guard(item, "duplicate_object"))
 			continue
 		}
 		if strings.HasPrefix(value, "create schema") {
-			schemas = append(schemas, Guard(item))
+			schemas = append(schemas, Guard(item, "duplicate_schema"))
 			continue
 		}
 		if strings.HasPrefix(value, "create type") {
-			types = append(types, Guard(item))
+			types = append(types, Guard(item, "duplicate_object"))
 			continue
 		}
 		if strings.HasPrefix(value, "create domain") {
-			domains = append(domains, Guard(item))
+			domains = append(domains, Guard(item, "duplicate_object"))
 			continue
 		}
 		return nil, fmt.Errorf("unsupported sql: %s", value)
@@ -102,13 +98,14 @@ func ReplaceManyWithOne(str string, old rune, new rune) string {
 	return strings.Join(split, string(new))
 }
 
-func Guard(item string) string {
+func Guard(item string, execption string) string {
 	return fmt.Sprintf(
 		`DO $$ BEGIN
 	%s
 EXCEPTION
-	WHEN duplicate_object THEN null;
+	WHEN %s THEN null;
 END $$;`,
 		strings.ReplaceAll(item, "\r\n", "\r\n\t"),
+		execption,
 	)
 }
