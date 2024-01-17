@@ -107,7 +107,7 @@ func Guard(item string) string {
 		`DO $$ BEGIN
 	%s
 EXCEPTION
-WHEN duplicate_object THEN null;
+	WHEN duplicate_object THEN null;
 END $$;`,
 		strings.ReplaceAll(item, "\r\n", "\r\n\t"),
 	)
